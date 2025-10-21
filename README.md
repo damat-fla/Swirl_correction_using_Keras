@@ -20,11 +20,13 @@ To further improve the model's performance, I created an ensemble of 4 identical
 
 ## Custom Evaluation Metric
 The evaluation metric consists in computing the mean over all the batches in the dataset of the ratio between the MSE of the reconstructed image and the MSE induced by the swirl distortion with respect to the original image. Formally, given M the number of batches in the dataset, the metric is defined as:
+
 $$
 \text{Metric} = \frac{1}{M} \sum_{m=1}^{M} 
 \frac{\mathrm{MSE}_m(\text{original}, \text{reconstructed})}
 {\mathrm{MSE}_m(\text{original}, \text{corrupted})}
 $$
+
 Where original is a batch of original images, reconstructed is the output of the model for the batch and corrupted is the corrupted version of the original images for the batch. According to this metric, values above 1 mean that the model is performing worse than doing nothing (i.e., returning the corrupted image as output), while values below 1 indicate that the model is effectively correcting the swirl distortion. The lower the value, the better the performance of the model.
 
 ## Custom Loss Function
