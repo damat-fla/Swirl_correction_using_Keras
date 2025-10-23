@@ -1,5 +1,5 @@
 # Swirl_correction_using_Keras
-This repository contains the code of the project for the "Deep Learning" course of the master in AI at the University of Bologna. The purpose of this project is to implement a deep learning model using Keras to correct swirl distortions in images. The project consists of a single python notebook that contains the code for data generation (artificial swirl defects on flowers), model definition, training, and testing. Here is an example of a flower image and its corrupted version with swirl distortion:
+This repository contains the code of the project for the "Deep Learning" course of the master in AI at the University of Bologna. The purpose of this project is to implement a deep learning model using Keras to correct swirl distortions in images. The project consists of a single python notebook that contains the code for data generation (artificial swirl defects on [TensorFlow Flowers dataset](https://www.tensorflow.org/datasets/catalog/tf_flowers)), model definition, training, and testing. Here is an example of a flower image and its corrupted version with swirl distortion:
 
 <p align="center">
   <img src="./assets/results1.png" width="90%">
@@ -17,6 +17,10 @@ To make it more challenging, the following constraints were established:
 ## Model Architecture
 The model I developed is a shallow U-Net-like architecture. I chose the U-Net structure because it is well-suited for image-to-image translation tasks. However, since the swirl distortion affects only a very small region of the image, most of the content can simply be copied as it is, without requiring complex transformations. For this reason, I thought to be unnecessary to compress and reconstruct the entire image, as is typically done in deeper U-Nets, since it would have been a waste of information. The network performs downsampling only down to 32×32, avoiding the loss of useful details and preserving the overall structure of the image. This allows the model to focus on correcting the local distortion while leaving the rest untouched. As a result, the model has a very low number of parameters (around 800,000), making it lighter and faster to train.
 To further improve the model's performance, I created an ensemble of 4 identical U-Net models (as I just described) trained independently. The resulting output is obtained by averaging the outputs of the 4 models. This ensemble approach allowed me to further improve model performance according to the [evaluation metric](#custom-evaluation-metric).
+
+<p align="center">
+  <img src="./assets/network_architecture.png" width="50%">
+</p>
 
 ## Custom Evaluation Metric
 The evaluation metric consists in computing the mean over all the batches in the dataset of the ratio between the MSE of the reconstructed image and the MSE induced by the swirl distortion with respect to the original image. Formally, given M the number of batches in the dataset, the metric is defined as:
@@ -52,11 +56,11 @@ In **stage 3**, the Pixelwise Loss is added, and the learning rate is slightly d
 The **final two stages** serve as refinement: the three losses are assigned fixed weights, and the learning rate is further reduced to stabilize the weights.
 
 ## Results
-The final ensemble model achieved a score of approximately 0.125 on the test set with a standard deviation across all batches of about 0.011, indicating a significant improvement over the corrupted images. Qualitative evaluation shows that is difficult to distinguish between the original and reconstructed images, demonstrating the effectiveness of the model in correcting swirl distortions.
+The final ensemble model achieved a score of approximately 0.13 on the test set with a standard deviation across all batches of about 0.011, indicating a significant improvement over the corrupted images. Qualitative evaluation shows that is difficult to distinguish between the original and reconstructed images, demonstrating the effectiveness of the model in correcting swirl distortions.
 
 <p align="center">
   <img src="./assets/results2.png" width="70%">
 </p>
 
 ## How to Run the Code
-The easiest way to run the code is to use Google Colab. To test the model without performing any training, simply run all the cells in the **Functions Definition** and **Ensemble Model** sections of the notebook, and skip all the training stages included in the **Training Phase** section. This will load the weights I have already trained and made available through gdown. If you want to retrain the model from scratch, simply run all the cells in the notebook.
+The easiest way to run the code is to use Google Colab. To test the model without performing any training, simply run all the cells in the **Functions Definition** and **Ensemble Model** sections of the notebook, and skip all the training stages included in the **Training Phase** section. This will load the weights I have already trained and made available through [gdown](https://pypi.org/project/gdown/). If you want to retrain the model from scratch, simply run all the cells in the notebook.
